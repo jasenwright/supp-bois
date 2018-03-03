@@ -20,7 +20,7 @@ app.use(bodyParser.json())
 app.use(poweredByHandler)
 
 // --- SNAKE LOGIC GOES BELOW THIS LINE ---
-var taunt_counter = 8;
+var taunt_counter = 15;
 var items = ['SOMEBODY TOUCHA MY SPAGHET!', 'SOMEONE IS IN DISA HOUSE!!','u go HOME to your HOUSE !!!', 'ITS GOTTA FACE BUT NO BODY!!', 'U GO HOME!', 'dont toucha my moms SPAGHETT'];
 var taunt = items[0];
 var squares;
@@ -123,13 +123,13 @@ app.post('/move', (request, response) => {
 
   var moveSide = myhead_x - shortest[0].x;
   var moveUp = myhead_y - shortest[0].y;
-  
+
   if(taunt_counter == 0)
   {
-    taunt = items[Math.floor(Math.random()*items.length)]; 
+    taunt = items[Math.floor(Math.random()*items.length)];
     taunt_counter =5;
   }
-  
+
 
 
   // Response data
