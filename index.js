@@ -81,7 +81,7 @@ app.post('/move', (request, response) => {
     }
   }
 
-  console.log(squares);
+  // console.log(squares);
 
   graph = new Graph(squares);
   // console.log(graph.grid);
@@ -89,9 +89,22 @@ app.post('/move', (request, response) => {
   // Find closest food
   var end;
   var result;
-  end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
+  var foo = 0;
+  var shortest;
+  end = graph.grid[request.body.food.data[foo].x][request.body.food.data[foo].y];
   result = astar.search(graph, start, end);
-  var shortest = result;
+  shortest = result;
+  if (shortest.length == 0) {
+    for (var i = foo; i < request.body.food.data.length; i++) {
+      end = graph.grid[request.body.food.data[i].x][request.body.food.data[i].y];
+    	result = astar.search(graph, start, end);
+      console.log('This path is: ' + result.length);
+      if (result.length > 0) {
+        shortest = result;
+        break;
+      }
+    }
+  }
   for (var i = 1; i < request.body.food.data.length; i++) {
     end = graph.grid[request.body.food.data[i].x][request.body.food.data[i].y];
   	result = astar.search(graph, start, end);
@@ -102,16 +115,17 @@ app.post('/move', (request, response) => {
       shortest = result;
     }
   }
-  end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
-  result = astar.search(graph, start, end);
-	// var end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
-	// var result = astar.search(graph, start, end);
-  console.log('Start: ' + start);
-  console.log('End: ' + end);
-  console.log(result[0]);
-  // if result[0] is undefined
-  //  move in a random but legal direction
-  console.log(result[0].x);
+  console.log('shortest path: ' + shortest.length);
+  // end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
+  // result = astar.search(graph, start, end);
+	// // var end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
+	// // var result = astar.search(graph, start, end);
+  // console.log('Start: ' + start);
+  // console.log('End: ' + end);
+  // console.log(result[0]);
+  // // if result[0] is undefined
+  // //  move in a random but legal direction
+  // console.log(result[0].x);
 
   // var start = graph.grid[request.body.you.body.data[0].x][request.body.you.body.data[0].y]
   //
