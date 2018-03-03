@@ -20,7 +20,9 @@ app.use(bodyParser.json())
 app.use(poweredByHandler)
 
 // --- SNAKE LOGIC GOES BELOW THIS LINE ---
-
+var taunt_counter = 8;
+var items = ['SOMEBODY TOUCHA MY SPAGHET!', 'SOMEONE IS IN DISA HOUSE!!','u go HOME to your HOUSE !!!', 'ITS GOTTA FACE BUT NO BODY!!', 'U GO HOME!', 'dont toucha my moms SPAGHETT'];
+var taunt = items[0];
 var squares;
 var graph;
 var moves = new Array();
@@ -116,47 +118,19 @@ app.post('/move', (request, response) => {
     }
   }
   console.log('shortest path: ' + shortest.length);
-  // end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
-  // result = astar.search(graph, start, end);
-	// // var end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
-	// // var result = astar.search(graph, start, end);
-  // console.log('Start: ' + start);
-  // console.log('End: ' + end);
-  // console.log(result[0]);
-  // // if result[0] is undefined
-  // //  move in a random but legal direction
-  // console.log(result[0].x);
-
-  // var start = graph.grid[request.body.you.body.data[0].x][request.body.you.body.data[0].y]
-  //
-  // squares[request.body.food.data[0].x][request.body.food.data[0].y] = 2;
-  // for(var i=0;i<request.body.you.length;i++){
-	// 	squares[request.body.you.body.data[i].x][request.body.you.body.data[i].y] = request.body.you.length+i;
-  //   // console.log(squares[request.body.you.body.data[i].x][request.body.you.body.data[i].y]);
-	// }
-  //
   var myhead_x= request.body.you.body.data[0].x;
   var myhead_y= request.body.you.body.data[0].y;
-  // var mylength= request.body.you.length;
-  // var myhealth= request.body.you.health-1;
-  // var food_x = request.body.food.data[0].x;
-  // var food_y = request.body.food.data[0].y;
-  // // need cases for when snake dies..
-  //
-  // var new_head;
-  // //moves is a list of moves that the snake is to carry out. IF there are no moves left, then run a search to find more.
-	// if(moves.length == 0){
-	// 	findpath_bfs(request);
-  //   new_head = move(moves.shift(), request);
-	// } else {
-	// 	//we still have moves left, so move the snake to the next square.
-	// 	new_head = move(moves.shift(), request);
-	// }
-  //
+
   var moveSide = myhead_x - shortest[0].x;
   var moveUp = myhead_y - shortest[0].y;
-  var items = ['SOMEBODY TOUCHA MY SPAGHET!', 'SOMEONE IS IN DISA HOUSE!!','u go HOME to your HOUSE !!!', 'ITS GOTTA FACE BUT NO BODY!!', 'U GO HOME!', 'dont toucha my moms SPAGHETT'];
-  var taunt = items[Math.floor(Math.random()*items.length)];
+  
+  if(taunt_counter == 0)
+  {
+    taunt = items[Math.floor(Math.random()*items.length)]; 
+    taunt_counter =5;
+  }
+  
+
 
   // Response data
   const data = {
@@ -173,131 +147,10 @@ app.post('/move', (request, response) => {
   } else {
     data.move = 'down';
   }
+  taunt_counter--;
 
   return response.json(data)
 })
-
-//Point class, used to refer to a specific square on the request.body.height
-function Point(pos_x,pos_y){
-	this.x = pos_x;
-	this.y = pos_y;
-}
-
-//Node class, used by searches as nodes in a tree.
-function Node(parent,point,children){
-	this.parent = parent;
-	this.point = point;
-	this.children = children;
-}
-
-//Breadth First Search
-function findpath_bfs(request){
-	// Creating our Open and Closed Lists
-	var openList = new Array();
-	var closedList = new Array(request.body.height);
-	for(var i=0;i<request.body.height;i++){
-		closedList[i] = new Array(request.body.height);
-	}
-	//initialize closedList values to 0
-	for(var i=0;i<request.body.height;i++){
-		for(var j=0;j<request.body.height;j++){
-			closedList[i][j] = 0;
-		}
-	}
-	// Adding our starting point to Open List
-	openList.push(new Node(null,request.body.you.body.data[0],new Array()));
-	// Loop while openList contains some data.
-	while (openList.length != 0) {
-		var n = openList.shift();
-    // console.log(squares[n.point.x][n.point.y]);
-		if(closedList[n.point.x][n.point.y] == 1)
-			continue;
-		// Check if node is food
-		if (squares[n.point.x][n.point.y] == 2) {
-			//if we have reached food, climb up the tree until the root to obtain path
-			while (n.parent != null) {
-				moves.unshift(n.point);
-				if(squares[n.point.x][n.point.y] == 0)
-					squares[n.point.x][n.point.y] = 1;
-				n = n.parent;
-			}
-			break;
-		}
-		// Add current node to closedList
-		closedList[n.point.x][n.point.y] = 1;
-
-    // if (n.point.y == 0) { // Don't look up
-    //
-    // } else {
-    //   if(closedList[n.point.x][n.point.y-1] == 0 && (squares[n.point.x][n.point.y-1] == 0 || squares[n.point.x][n.point.y-1] == 2)) {
-  	// 		n.children.unshift(new Node(n,new Point(n.point.x,n.point.y-1),new Array()));
-    //   }
-    // }
-    // if (n.point.y == request.body.height) { // Don't look down
-    //
-    // } else {
-    //   if(closedList[n.point.x][n.point.y+1] == 0 && (squares[n.point.x][n.point.y+1] == 0 || squares[n.point.x][n.point.y+1] == 2)) {
-  	// 		n.children.unshift(new Node(n,new Point(n.point.x,n.point.y+1),new Array()));
-    //   }
-    // }
-    // if (n.point.x == request.body.width) { // Don't look right
-    //
-    // } else {
-    //   if(closedList[n.point.x+1][n.point.y] == 0 && (squares[n.point.x+1][n.point.y] == 0 || squares[n.point.x+1][n.point.y] == 2)) {
-  	// 		n.children.unshift(new Node(n,new Point(n.point.x+1,n.point.y),new Array()));
-    //   }
-    // }
-    // if (n.point.x == 0) { // Don't look left
-    //
-    // } else {
-    //   if(closedList[n.point.x-1][n.point.y] == 0 && (squares[n.point.x-1][n.point.y] == 0 || squares[n.point.x-1][n.point.y] == 2)) {
-  	// 		n.children.unshift(new Node(n,new Point(n.point.x-1,n.point.y),new Array()));
-    //   }
-    // }
-    // Add adjacent nodes to openlist to be processed.
-		if(closedList[n.point.x][n.point.y-1] == 0 && (squares[n.point.x][n.point.y-1] == 0 || squares[n.point.x][n.point.y-1] == 2))
-			n.children.unshift(new Node(n,new Point(n.point.x,n.point.y-1),new Array()));
-		if(closedList[n.point.x+1][n.point.y] == 0 && (squares[n.point.x+1][n.point.y] == 0 || squares[n.point.x+1][n.point.y] == 2))
-			n.children.unshift(new Node(n,new Point(n.point.x+1,n.point.y),new Array()));
-		if(closedList[n.point.x][n.point.y+1] == 0 && (squares[n.point.x][n.point.y+1] == 0 || squares[n.point.x][n.point.y+1] == 2))
-			n.children.unshift(new Node(n,new Point(n.point.x,n.point.y+1),new Array()));
-		if(closedList[n.point.x-1][n.point.y] == 0 && (squares[n.point.x-1][n.point.y] == 0 || squares[n.point.x-1][n.point.y] == 2))
-			n.children.unshift(new Node(n,new Point(n.point.x-1,n.point.y),new Array()));
-		for(var i=0;i<n.children.length;i++){
-			openList.push(n.children[i]);
-		}
-	}
-}
-
-//helper function checks if two points are adjacent. Used to check if moves are legal.
-function is_adjacent(point1, point2){
-	if(point1.x == point2.x && (point1.y == point2.y-1 || point1.y == point2.y+1))
-		return true;
-	if(point1.y == point2.y && (point1.x == point2.x-1 || point1.x == point2.x+1))
-		return true;
-	return false;
-}
-
-//move the snake to the new Point given
-function move(new_head, request){
-	//check that this is a legal move. Square must be adjacent and empty (can move to empty, food or path.
-	if((!is_adjacent(new_head,request.body.you.body.data[0])) || squares[new_head.x][new_head.y] > 2){
-		return false;
-	}
-
-	//clear the tail
-	squares[request.body.you.body.data[request.body.you.length-1].x][request.body.you.body.data[request.body.you.length-1].y] = 0;
-
-	//move the snake forward
-	// for(var i=request.body.you.length-1;i>0;i--){
-	// 	request.body.you.body.data[i].x = snake[i-1].x;
-	// 	request.body.you.body.data[i].y = snake[i-1].y;
-	// }
-	// request.body.you.body.data[0].x = new_head.x;
-	// request.body.you.body.data[0].y = new_head.y;
-
-  return new_head;
-}
 
 
 // --- SNAKE LOGIC GOES ABOVE THIS LINE ---
@@ -311,9 +164,7 @@ app.listen(app.get('port'), () => {
 })
 
 
-
-
-
+//A *
 function pathTo(node) {
   var curr = node;
   var path = [];
