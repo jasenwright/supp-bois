@@ -38,6 +38,9 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
+  var food_x = request.body.food.data[0].x;
+  var food_y = request.body.food.data[0].y;
+  console.log("food is at : "+food_x+","+food_y);
 
   // Response data
   const data = {
