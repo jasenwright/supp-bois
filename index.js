@@ -127,11 +127,13 @@ app.post('/move', (request, response) => {
   //
   var moveSide = myhead_x - result[0].x;
   var moveUp = myhead_y - result[0].y;
+  var items = ['SOMEBODY TOUCHA MY SPAGHET!', 'SOMEONE IS IN DISA HOUSE!!','u go HOME to your HOUSE !!!', 'ITS GOTTA FACE BUT NO BODY!!', 'U GO HOME!', 'dont toucha my moms SPAGHETT'];
+  var taunt = items[Math.floor(Math.random()*items.length)];
 
   // Response data
   const data = {
     move: 'up', // one of: ['up','down','left','right']
-    taunt: 'SOMEBODY TOUCHA MY SPAGHET!', // optional, but encouraged!
+    taunt: taunt, // optional, but encouraged!
   }
   if (moveSide == 1) {
     data.move = 'left'; // one of: ['up','down','left','right']
