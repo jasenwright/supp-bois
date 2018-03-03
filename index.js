@@ -50,7 +50,7 @@ app.post('/start', (request, response) => {
   init(request);
   // Response data
   const data = {
-    color: '#DFFF00',
+    color: '#DFF000',
     head_url: 'https://lh3.googleusercontent.com/vUVAL5IZJl_9MsS7PQcWotUqinlSEIW_VllIN32y9zZcKH_XVTS1ZtGPgbFRxE42IsSS=w300', // optional, but encouraged!
     taunt: "SOMEONE IS IN DISA HOUSE", // optional, but encouraged!
   }
@@ -75,11 +75,7 @@ app.post('/move', (request, response) => {
 		squares[request.body.you.body.data[i].x][request.body.you.body.data[i].y] = 0;
     // console.log(squares[request.body.you.body.data[i].x][request.body.you.body.data[i].y]);
 	}
-  // console.log("Snakes in disa");
-  // console.log(request.body.snakes.data[0].body.data[0]);
-  // console.log(request.body.snakes.data.length);
   for(var i = 0; i < request.body.snakes.data.length; i++) {
-    console.log(request.body.snakes.data[i].body.data.length);
     for (var j = 0; j < request.body.snakes.data[i].body.data.length; j++) {
       squares[request.body.snakes.data[i].body.data[j].x][request.body.snakes.data[i].body.data[j].y] = 0;
     }
@@ -90,8 +86,26 @@ app.post('/move', (request, response) => {
   graph = new Graph(squares);
   // console.log(graph.grid);
   var start = graph.grid[request.body.you.body.data[0].x][request.body.you.body.data[0].y];
-	var end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
-	var result = astar.search(graph, start, end);
+  // Find closest food
+  var end;
+  var result;
+  end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
+  result = astar.search(graph, start, end);
+  var shortest = result;
+  for (var i = 1; i < request.body.food.data.length; i++) {
+    end = graph.grid[request.body.food.data[i].x][request.body.food.data[i].y];
+  	result = astar.search(graph, start, end);
+    console.log('This path is: ' + result.length);
+    if (result.length == 0) {
+      continue;
+    } else if (result.length < shortest.length) {
+      shortest = result;
+    }
+  }
+  end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
+  result = astar.search(graph, start, end);
+	// var end = graph.grid[request.body.food.data[0].x][request.body.food.data[0].y];
+	// var result = astar.search(graph, start, end);
   console.log('Start: ' + start);
   console.log('End: ' + end);
   console.log(result[0]);
@@ -125,8 +139,8 @@ app.post('/move', (request, response) => {
 	// 	new_head = move(moves.shift(), request);
 	// }
   //
-  var moveSide = myhead_x - result[0].x;
-  var moveUp = myhead_y - result[0].y;
+  var moveSide = myhead_x - shortest[0].x;
+  var moveUp = myhead_y - shortest[0].y;
   var items = ['SOMEBODY TOUCHA MY SPAGHET!', 'SOMEONE IS IN DISA HOUSE!!','u go HOME to your HOUSE !!!', 'ITS GOTTA FACE BUT NO BODY!!', 'U GO HOME!', 'dont toucha my moms SPAGHETT'];
   var taunt = items[Math.floor(Math.random()*items.length)];
 
