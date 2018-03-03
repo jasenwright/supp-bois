@@ -38,10 +38,20 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
+  console.log(request.body.you.body);
+  var myhead_x= request.body.you.body.data[0].x;
+  var myhead_y= request.body.you.body.data[0].y;
+  var mylength= request.body.you.length;
+  var myhealth= request.body.you.health-1;
   var food_x = request.body.food.data[0].x;
   var food_y = request.body.food.data[0].y;
+  console.log("mylength is at : "+mylength);
+  console.log("myhealth is at : "+myhealth);
   console.log("food is at : "+food_x+","+food_y);
-
+  console.log("head is at : "+myhead_x+","+myhead_y); //if myhead_y = 0 or myhead_x = 0 snake dies 
+  // need cases for when snake dies..
+  
+  
   // Response data
   const data = {
     move: 'up', // one of: ['up','down','left','right']
