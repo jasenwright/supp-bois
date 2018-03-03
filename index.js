@@ -51,7 +51,7 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     color: '#DFFF00',
-    head_url: 'http://www.placecage.com/c/200/200', // optional, but encouraged!
+    head_url: 'https://lh3.googleusercontent.com/vUVAL5IZJl_9MsS7PQcWotUqinlSEIW_VllIN32y9zZcKH_XVTS1ZtGPgbFRxE42IsSS=w300', // optional, but encouraged!
     taunt: "SOMEONE IS IN DISA HOUSE", // optional, but encouraged!
   }
 
@@ -75,6 +75,15 @@ app.post('/move', (request, response) => {
 		squares[request.body.you.body.data[i].x][request.body.you.body.data[i].y] = 0;
     // console.log(squares[request.body.you.body.data[i].x][request.body.you.body.data[i].y]);
 	}
+  // console.log("Snakes in disa");
+  // console.log(request.body.snakes.data[0].body.data[0]);
+  // console.log(request.body.snakes.data.length);
+  for(var i = 0; i < request.body.snakes.data.length; i++) {
+    console.log(request.body.snakes.data[i].body.data.length);
+    for (var j = 0; j < request.body.snakes.data[i].body.data.length; j++) {
+      squares[request.body.snakes.data[i].body.data[j].x][request.body.snakes.data[i].body.data[j].y] = 0;
+    }
+  }
 
   console.log(squares);
 
@@ -86,6 +95,8 @@ app.post('/move', (request, response) => {
   console.log('Start: ' + start);
   console.log('End: ' + end);
   console.log(result[0]);
+  // if result[0] is undefined
+  //  move in a random but legal direction
   console.log(result[0].x);
 
   // var start = graph.grid[request.body.you.body.data[0].x][request.body.you.body.data[0].y]
