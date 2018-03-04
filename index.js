@@ -127,7 +127,7 @@ app.post('/move', (request, response) => {
   if(taunt_counter == 0)
   {
     taunt = items[Math.floor(Math.random()*items.length)];
-    taunt_counter =5;
+    taunt_counter =15;
   }
 
 
